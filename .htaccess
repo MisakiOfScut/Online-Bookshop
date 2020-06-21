@@ -1,0 +1,21 @@
+DirectoryIndex bookshop/index.html  
+<Files ~ "^.(htaccess|htpasswd)$">
+deny from all
+</Files>
+<FilesMatch ".(gif|jpg|jpeg|png|ico)$">
+Header set Cache-Control "max-age=256000"
+</FilesMatch>
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^(xxx\.xxx)(:80)? [NC]
+RewriteRule ^(.*) https://www.xxx.xxx/$1 [R=301,L]     
+order deny,allow
+
+
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !^.*(\.html\.css|\.js|\.gif|\.png|\.jpg|\.jpeg|\.ttf|\.woff|\.woff2)$
+RewriteRule - [L] 
+
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /bookshop/include/router.php [L]
