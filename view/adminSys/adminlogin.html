@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link rel="icon" href="#">
+
+    <title>Admin Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../../lib/css/adminlogin.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <div class="container">
+        <form class="form-signin" name="login">
+            <h2 class="form-signin-heading">管理员登录</h2>
+            <label for="inputEmail" class="sr-only">用户名</label>
+            <input type="text" id="username" class="form-control" placeholder="用户名" 
+                name="username"required autofocus>
+            <label for="inputPassword" class="sr-only">密码</label>
+            <input type="password" id="pwd" class="form-control" style="margin-bottom:-1px;"
+                placeholder="请输入密码" name="pwd" required autofocus>  
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="checkbox"> Remember me
+              </label>
+            </div>
+            <input class="btn btn-lg btn-primary btn-block" value="登录" type="button" id="login_btn"></input>
+          </form>
+    </div> <!-- /container -->
+  
+    <script type="text/javascript" src="../../lib/js/jquery.js"></script>
+    <script type="text/javascript">
+        $("#checkbox").attr("checked",true)//选中
+        $("#checkbox").attr("checked",false)//未选中
+        //check cookie
+        $(function(){
+            if(getCookie('rmbUser')){
+                $("#username").val(getCookie('username'));
+            }
+        });
+        function setCookie(cname,cvalue,exdays)
+        {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname + "=" + cvalue + "; " + expires +';path=/';
+            }
+        function getCookie(cname)
+        {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) 
+            {
+                var c = ca[i].trim();
+                if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+        function save(tk){
+            if($("#checkbox").is(':checked')){
+                var username = $.trim($("#username").val());
+                var pwd = $.trim($("#pwd").val());
+                setCookie('rmbUser', true, 7); //存储一个带7天期限的cookie
+                setCookie('username',username, 7);
+                setCookie('tk',tk, 0.2);
+            }
+            else{
+                setCookie('rmbUser', false, 7); 
+                setCookie('tk',tk, 0.2);
+            }
+        }
+        //js验证表单
+        $("#login_btn").click(function(){
+            var username = $.trim($("#username").val());
+            var pwd = $.trim($("#pwd").val());
+            var regu=/^[A-Za-z_][A-Za-z0-9_]{2,15}$/;
+            var re= new RegExp(regu);
+            if (username=="") {
+                alert("请输入用户名！");
+                return false;
+            }
+            else if (!re.test(username)) {
+                alert("用户名必须为以字母开头，3-16位数字、下划线、字母的任意组合！");
+                return false;
+            }
+            var regu=/[A-Za-z0-9_]{6,16}$/;
+            var re= new RegExp(regu);
+            if(pwd=="") {
+                alert("密码不能为空！");
+                return false;
+            }
+
+            //ajax url request服务器端校验
+            var data= {username:username,pwd:pwd};
+            $.ajax({
+            type:"POST",
+            url:"/bookshop/adminSys/adminlogin.php",
+            data:data,
+            dataType:'json',
+            success:function(result){
+                //alert(msg);
+                if(result.code==1){
+                    save(result.tk);//set cookie                   
+                    window.location.href = "booklist.html";  
+                }else{
+                    alert("登录失败，请重试!");
+                }
+            },
+            error:function(xhr){
+                alert("错误提示： " + xhr.status + " " + xhr.statusText);
+            }
+            });           
+        });
+    </script>
+  </body>
+</html>

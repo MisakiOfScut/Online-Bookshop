@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>书本详细</title>
+	<link rel="stylesheet" type="text/css" href="../lib/css/bootstrap.min.css">
+<script src="../lib/js/jquery.js"></script>
+<script src="../lib/js/bootstrap.min.js"></script>
+<script src="../lib/js/jquery.params.js"></script>
+	
+    <style type="text/css">
+        .header{    
+            /* width: 100px; */
+            height: 60px;
+            margin-top: 5px;
+            margin-left: 10px;
+            margin-right: 10px;
+         
+        }
+
+        .bookImg{
+            border-width: 2px;
+            border-color: white;
+            border-style: solid;
+            width: 230px;
+            height: 280px;
+            margin-top: 50px;
+            margin-left: 300px;
+            border-radius: 15px;
+        }
+        
+        .info{
+            border-width: 2px;
+            border-color: black;
+            border-style: solid;
+            width: 600px;
+            height: 280px;
+            margin-left: 600px;
+            margin-top: 50px;
+            border-radius: 15px;
+        }
+        
+        .info1{
+            margin-top: 20px;
+        }
+
+        .titleTxt{
+            padding-left: 20px;
+            font-size: 25px;
+        }
+
+        .writer{
+            display: flex;
+            /* margin-top: 20px; */
+            margin-left: 20px;
+            float: left;
+        }
+
+        .type{
+            display: flex;
+            margin-left: 300px;
+            /* float: left; */
+        }
+
+        .txt{
+            padding-left: 20px;
+        }
+
+        .buyButton{
+            border-width: 2px;
+            border-color: #cc0033;
+            border-style: solid;
+            color: white;
+            background-color: #cc0033;
+            width: 100px;
+            height: 50px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            /* border-radius: 15px; */
+        }
+
+        .cartButton{
+            border-width: 2px;
+            border-color: #cc0033;
+            border-style: solid;
+            color: #cc0033;
+            background-color: white;
+            width: 130px;
+            height: 50px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            /* border-radius: 15px; */
+        }
+
+        .briefIntro{
+            border-width: 2px;
+            border-color: black;
+            border-style: solid;
+            width: 900px;
+            height: 280px;
+            margin-top: 35px;
+            margin-left: 300px;
+            border-radius: 15px;
+        }
+		
+		 /* 数量加减按钮 */
+        ul,
+            li {
+                list-style: none;
+            }
+            
+            a {
+                text-decoration: none;
+            }
+            
+            a:hover {
+                cursor: pointer;
+                text-decoration: none;
+            }
+            
+            a:link {
+                text-decoration: none;
+            }
+            
+            img {
+                vertical-align: middle;
+            }
+            
+            .btn-numbox {
+                overflow: hidden;
+                margin-top: 20px;
+            }
+            
+            .btn-numbox li {
+                float: left;
+            }
+            
+            .btn-numbox li .number,
+            .stock {
+                display: inline-block;
+                font-size: 15px;
+                color: #808080;
+                vertical-align: sub;
+            }
+            
+            .btn-numbox .count {
+                overflow: hidden;
+                margin: 0 16px 0 -20px;
+            }
+            
+            .btn-numbox .count .num-reduce,
+            .input-num,
+            .num-add {
+                display: inline-block;
+                width: 28px;
+                height: 25px;
+                line-height: 28px;
+                text-align: center;
+                font-size: 18px;
+                color: #999;
+                cursor: pointer;
+                border: 1px solid #e6e6e6;
+            }
+            .btn-numbox .count .input-num {
+                width: 58px;
+                height: 26px;
+                color: #333;
+                border-left: 0;
+                border-right: 0;
+            }
+    </style>
+</head>
+<body style="min-height: 1000px;">
+    <div class="header">
+        <div class="container-fluid" style="background:#F4F4F4;height:37px">
+            <div class="row" >
+                <div class="col-sm-6" align="center">
+                <ul class="breadcrumb">
+                <span>你好!找到中意的书了吗？请</span>
+                    <li ><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                </ul>
+                </div>
+
+                <div class="col-sm-6" align="right">
+                    <div class="dropdown">
+
+                        <span> <a href="#">个人中心</a>&nbsp;&nbsp;&nbsp;| &nbsp;</span>
+                        <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" 
+                                data-toggle="dropdown" style="background:#F4F4F4; color:#7057FB">
+                            客服
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1" >
+                        <li role="presentation" >
+                            <a role="menuitem" tabindex="-1" href="#">帮助中心</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="booklist.html">管理员入口</a>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bookImg" style="float: left;">
+        <img src="" width="180px" height="220px" id="filedir">
+    </div>
+
+    <div class="info" >
+        <p class="titleTxt">书名：<span id="title"></span></p>
+        <div class="info1">
+            <div class="writer">
+                作者：<span id="author"></span>
+            </div>
+            <div class="type">
+                类别：<span id="category"></span>
+            </div>
+        </div>
+       <div>
+			<p class="txt">价格：<span id="price"></span></p>
+            <!-- 数量加减按钮 -->
+            <ul class="btn-numbox">
+                <li><span class="number">数量</span></li>
+                <li>
+                    <ul class="count">
+                        <li><span id="num-reduce" class="num-reduce" onClick="minNumber()">-</span></li>
+                        <li><input type="text" class="input-num" id="input-num" value="1" /></li>
+                        <li><span id="num-add" class="num-add" onClick="addNumber()">+</span></li>
+                    </ul>
+                </li>
+                <li><span class="stock">（库存:<span id="quantity"></span>）</span></li>
+    　　　  </ul>
+        </div>   
+        <button type="button" class="buyButton">购买</button>
+        <button type="button" class="cartButton">加入购物车</button>
+    </div>
+    <div class="briefIntro"><h4 style="padding-top: 0px; padding-left: 20px;">简介：<span id="introduction"></span></h4></div>
+	
+	
+<!--	<div id="id"></div> -->
+
+</body>
+</html>
+
+<script>
+var kucun = null;
+
+$(function(){
+getData1();
+});
+
+function getData1(){
+    var id = $.query.get("id");
+    //$("#id").text(id);  
+    load(id);  
+}  
+
+function load(id)
+{
+   var xhr = new XMLHttpRequest;
+		//发送请求
+		xhr.open('GET',`/getonebook?id=${id}`);
+		xhr.send();
+		xhr.onload = function(){
+		var data = JSON.parse(xhr.responseText);
+		if(data.code==1){ 
+				var result = data.data;//要渲染在表格中的数据!!!!!
+				var total = data.total;//总数据条数
+				//提取这本书的所有信息
+				var author = result.author;
+				var category  = result.category;
+				var quantity = result.quantity;
+				var introduction  = result.introduction;
+				var title = result.title;
+				var price = result.price;
+				var filedir = result.filedir;
+				kucun = quantity;
+				document.getElementById("author").innerHTML = author; 
+				document.getElementById("category").innerHTML = category; 
+				document.getElementById("quantity").innerHTML = quantity; 
+				document.getElementById("introduction").innerHTML = introduction; 
+				document.getElementById("title").innerHTML = title; 
+				document.getElementById("price").innerHTML = price;
+				document.getElementById("filedir").src = filedir;				
+				}//if
+		else 
+        alert("DATA NULL");
+		}//onload
+}//load
+
+
+
+function minNumber(){           
+             var num = document.getElementById("input-num").value;
+             if(parseInt(num) > 1)
+			 document.getElementById("input-num").value = parseInt(num) - 1;
+}
+
+function addNumber(){
+             var num = document.getElementById("input-num").value;
+             if(parseInt(num) < kucun)
+			 document.getElementById("input-num").value = parseInt(num) + 1;
+}
+
+
+</script>

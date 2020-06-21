@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8" />
+<title>主页</title>
+
+<link rel="stylesheet" type="text/css" href="../lib/css/bootstrap.min.css">
+<script type="text/javascript" src="../lib/js/jquery.js"></script>
+<script type="text/javascript" src="../lib/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.params.js"></script>
+
+</head>
+
+<body style="width: 100%;">
+
+<div class="container-fluid" style="background:#F4F4F4;height:37px">
+
+<div class="row" >
+<div class="col-sm-6" align="center">
+<ul class="breadcrumb">
+<span>你好!找到中意的书了吗？请</span>
+	<li ><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+	<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+</ul>
+</div>
+
+<div class="col-sm-6" 	align="right">
+<div class="dropdown">
+
+<span> <a href="#">个人中心</a>&nbsp;&nbsp;&nbsp;| &nbsp;</span>
+	<button type="button" class="btn dropdown-toggle" id="dropdownMenu1" 
+			data-toggle="dropdown" style="background:#F4F4F4; color:#7057FB">
+		客服
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1" >
+		
+		<li role="presentation" >
+			<a role="menuitem" tabindex="-1" href="#">帮助中心</a>
+		</li>
+		<li role="presentation">
+			<a role="menuitem" tabindex="-1" href="booklist.html">管理员入口</a>
+		</li>
+	</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 广告-->
+<div class="container">
+<div style="background:blue;height:100px">这边插入广告</div>
+</div>
+
+<div class="container">
+<div class="row">
+<div class="col-sm-2" >
+<a href="firstPage.html">                   <!--返回主页-->   
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587556065607&di=fc1e8293ee0a4aad4984f3768d531aa5&imgtype=0&src=http%3A%2F%2Fa0.att.hudong.com%2F78%2F52%2F01200000123847134434529793168.jpg" alt="返回主页的效果" width="100px">
+        </a>
+</div>
+
+<div class="col-sm-4 col-sm-offset-1" style="padding-top:50px;">
+	<div class="container" style="width: 1000px;">
+		<div class="row">
+			<div class="form-group col-sm-3" style="margin-left:300px">
+			<form>
+				<input type="text" class="form-control" placeholder="搜寻书籍"  style="width:320px; height:40px;" id="searchBookname" value=""/>      
+			</form>
+			</div>
+			<div class="col-sm-1" style="padding-right: 0;">
+				<button type="submit" class="btn btn-default" id="searchbtn" style="height:40px;float: right;border-right: 0;">
+					<span class="glyphicon glyphicon-search"></span>
+				</button>
+			</div>
+		</div>
+	</div>	
+</div>
+
+
+
+<div class="col-sm-1" style="padding-top:60px;">
+        <div style="border-color:#F4F4F4; border-style:groove; border-width:thin; height:25px; width:150px; margin-left:300px" align="center">
+		<a href="#">
+          <span class="glyphicon glyphicon-briefcase">&nbsp;购物车</span>
+        </a>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div class="container">
+<div class="col-sm-3">
+
+<ul class="nav nav-tabs">
+	
+	<li class="dropdown" style="width:260px">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+			  <span class="glyphicon glyphicon-th-list">&nbsp; 全部商品分类 </span>
+		</a>
+		<ul class="dropdown-menu" style="width:258px;" >
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=文学艺术" id="">文学艺术</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=人文社科" id="">人文社科</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=少儿童书" id="">少儿童书</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=教育考试" id="">教育考试</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=经济金融" id="">经济金融</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=生活休闲" id="">生活休闲</a></li>
+			<li style="padding-bottom:20px" align = "center"><a href="searchPage.html?kind=科学技术" id="">科学技术</a></li>
+			<li class="divider"></li>
+			
+		</ul>
+	</li>
+	
+</ul>
+
+
+</div>  <!--col 3-->
+
+
+<div class="container" style="padding-top:100px">
+
+
+<div id="bookshow">               <!--展示种类书籍或者搜索书籍-->
+
+</div>
+
+
+</div>
+
+<div id="count" class="text-right">
+                                            <!--pageNum    翻页按钮-->
+</div>
+
+</div>  <!--container-->
+
+
+
+
+<div id="kind">
+</div>
+<div id="searchBookname1">
+</div>
+
+</body>
+
+
+
+<script>
+
+       var i = 1;         //轮播图第一页开始
+       var pageSize = 20;//记录每页显示多少条数据
+	   var page = 1;//当前是第几页
+
+
+function getData1(){
+var kind = $.query.get("kind");
+var searchBookname = $.query.get("searchBookname");
+
+       if(kind != "")                      //种类查询
+	   load(kind,"")
+	   else if(searchBookname != "")       //书名查询
+	   load("",searchBookname)
+	   
+
+}  
+     
+	 
+	 
+	 function load(kind="",searchBookname=""){
+	   if(kind != "")
+	    var stext = kind;
+	   else
+	    var stext = searchBookname;
+	   
+	    var xhr = new XMLHttpRequest;
+		//发送请求
+		xhr.open('GET',`/showlist?page=${page}&pageSize=${pageSize}&stext=${stext}`);
+		xhr.send();
+		xhr.onload = function(){ 
+			var data = JSON.parse(xhr.responseText);                        //获得数据
+			
+			if(data.code==1){ 
+				var result = data.data;//要渲染在表格中的数据!!!!!
+				var total = data.total;//总数据条数
+				
+				var totalPage =  Math.ceil(total/pageSize);
+				var string = `<nav aria-label="Page navigation">
+								  <ul class="pagination">
+    								<li>
+     									<a href="#" aria-label="Previous">
+       									 <span aria-hidden="true">&laquo;</span>
+      								</a>
+    								</li> `;
+				for(var j=0;j<Math.min(10,totalPage);j++){
+					//如果循环的页码和当前页面相同，则当前页码高亮
+					if(j==page-1){
+						string = string+`<li class="active"><a href="javascript:;" class="page">${j+1}</a></li>`;
+					}else{
+						string = string+`<li><a href="javascript:;" class="page">${j+1}</a></li>`;
+					}
+					
+				}
+				string=string+
+                ` <li>
+     							<a href="#" aria-label="Next">
+        							<span aria-hidden="true">&raquo;</span>
+      						</a>
+    							</li>
+  							</ul>
+				</nav>`
+				document.getElementById('count').innerHTML = string;
+
+				//分页
+				var pageArr = document.getElementsByClassName('page');
+				for(var i=0;i<pageArr.length;i++){
+					pageArr[i].onclick = function(){
+						//在事件函数中，this指的绑定事件的那个元素
+						page = this.innerHTML;
+						load()
+					}
+        }
+				
+				//根据result渲染表格数据
+				var str = "";
+				for(var i=0;i<result.length;i++){
+				str = str+`
+				<div class="col-sm-3">
+                <div class="thumbnail">    
+                   <a href="introduction.html?id=${result[i].id}" class="thumbnail" target="_blank">                                       
+            <img 
+			src= "${result[i].filedir}" alt="这是一本书"  width="120px" height="100px">  
+			</a>                                         
+            <div class="caption">
+                <p><b>${result[i].title}</b></p>        <!--书本名字-->
+                
+				<p style = "color:red">￥ ${result[i].price}</p>          <!--书本价格-->
+            </div>
+      </div>
+   </div>  <!--col 3-->
+				`;
+				};      // for
+				var bookshow = document.getElementById('bookshow')
+				
+				bookshow.innerHTML = str;
+				}//if(data.code)
+			
+			else alert("DATA NULL");
+			}//onload
+ 
+}//load
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	                    //从 主页 或者 搜索页  获取的信息
+$(function(){
+getData1();
+$("#searchbtn").on("click",function(){
+jump1();
+});
+});
+
+function jump1(){
+
+var value = document.getElementById("searchBookname").value;  
+if(value != "")
+{
+var searchBookname = value;
+url = "searchPage.html?searchBookname="+searchBookname;//此处拼接内容
+window.location.href = url;
+}
+
+}
+
+
+
+
+
+</script>
+
+</html>

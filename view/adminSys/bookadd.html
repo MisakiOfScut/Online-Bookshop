@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+          <title>添加书籍</title>
+        <link rel="stylesheet" type="text/css" href="../../lib/css/bootstrap.css">
+        <style>
+        body {
+        min-height: 2000px;
+        padding-top: 70px;
+        }
+        </style>
+    </head>
+
+    <body>
+        <!-- 后台通用标签栏 -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">网站主页</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                <li><a href="../../view/adminSys/booklist.html">书籍列表</a></li>
+                <li class="active"><a href="../../view/adminSys/bookadd.html">添加书籍</a></li>
+                <li><a href="../../view/adminSys/adminlogin.html">管理员登录</a></li>                
+                </ul>
+            </div>
+            </div>
+        </nav>
+        <!--书籍提交表单-->
+        <div>
+            <form method="POST" id="addbook" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">书名</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" id="title" name="title" placeholder="书名">
+                  </div>  
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">作者</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" id="author" name="author" placeholder="作者名">
+                  </div>
+                </div><br><br>
+                <div class="form-group">
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">类别</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" id="category" name="category" placeholder="类别">
+                  </div>                    
+                </div><br><br>                
+                <div class="form-group">
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">简介</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" style="height: 80px;" name="introduction" id="introduction"  placeholder="简介">
+                  </div>
+                </div><br><br><br><br>
+                <div class="form-group">
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">价格</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" id="price" name="price" placeholder="价格">
+                  </div>  
+                  <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">数目</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" id="quantity" name="quantity" placeholder="数目">
+                  </div>
+                </div><br><br><br>
+                <div class="form-group">
+                  <label class="col-sm-1">上传图片</label>
+                  <div class="col-sm-4">
+                    <input type="file" name="file" id="file" enctype="multipart/form-data"
+                      style="float:left;background-color: ivory;">                    
+                  </div>
+                </div><br><br>
+                <div class="form-group">
+                    <label class="col-sm-1" style="margin-top: 5px;padding-left: 35px;">提交</label>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-primary" id="submit" onclick="return check(addbook)">提交</button>
+                    </div>
+                </div>
+              </form>
+        </div><!--form div end-->
+        <br><br><br>
+        <div style="margin-left: 20px;">
+          <label>
+            目前测试阶段上传文件允许为空，图片格式尽量用jpg<br>
+            code list<br>
+            0-----插入数据库失败<br>
+            1-----插入数据库成功<br>
+            2-----存在同名文件，使用已有图片<br>
+            100---文件类型错误/空文件<br>
+            101---文件错误<br>
+            102---临时文件移动出错<br>
+            无弹窗--请检查浏览器console  
+          </label>
+        </div>
+
+        <!--javascript-->
+        <script type="text/javascript" src="../../lib/js/jquery.js"></script>
+        <script type="text/javascript" src="../../lib/js/bootstrap.js"></script>
+        <script>
+          function getCookie(cname)
+          {
+              var name = cname + "=";
+              var ca = document.cookie.split(';');
+              for(var i=0; i<ca.length; i++) 
+              {
+                  var c = ca[i].trim();
+                  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+              }
+              return "";
+          }
+
+          //js验证表单
+          function check(form) {
+              if (form.title.value=="") {
+                  alert("请输入书名！");
+                  return false;
+              }
+              if(form.author.value==""){
+                  alert("请输入作者名！");
+                  return false;
+              }
+              if(form.category.value==""){
+                  alert("请输入作者名！");
+                  return false;
+              }
+              if(form.price.value<0||form.price.value==""){
+                  alert("价格不得小于0！");
+                  return false;
+              }
+              if(form.quantity.value<0||form.quantity.value==""){
+                  alert("数量不得小于0！");
+                  return false;
+              }
+              savebook();                   
+          }
+
+          function savebook(){
+            var fm=document.getElementById('addbook');
+            var formdata= new FormData(fm);
+            formdata.append('tk',getCookie('tk'));
+            var xhr=new XMLHttpRequest();
+            //js中的url从localhost开始
+            xhr.open("POST","/bookshop/adminSys/bookaddAct.php");
+            xhr.send(formdata);
+            xhr.onload=function(){
+              var data = JSON.parse(xhr.responseText);
+              if(data==403){
+                alert('无权操作，请登录');
+                window.location.replace('adminlogin.html');
+              }
+              if(data.sucesscode==1){
+                  alert('success  '+data.filecode);
+              }
+              else if(data.sucesscode==0){
+                alert('add book Failed  '+data.filecode);
+              }
+
+            }
+          }
+          
+        </script>
+    </body>
+</html>

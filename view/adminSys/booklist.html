@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>书籍列表</title>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/searchNav.css">
+    <style>
+    body {
+    min-height: 1500px;
+    padding-top: 70px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- 书籍修改模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">书籍信息修改</h4>
+            </div>
+            <mbody>           
+            </mbody>           
+        </div>
+      </div>
+    </div>
+
+    <!-- 后台通用标签栏 -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../firstPage.html">网站主页</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="../../view/adminSys/booklist.html">书籍列表</a></li>
+              <li><a href="../../view/adminSys/bookadd.html">添加书籍</a></li>
+              <li><a href="../../view/adminSys/adminlogin.html">管理员登录</a></li>               
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+      <!--搜索栏-->
+      <div class="container" style="margin-bottom: 10px;">
+            <div class="snav" style="width: 70%;height:50px;">
+                <form>
+                  <div class="col-sm-8" style="float: left;padding-right: 0;">
+                    <input type="text" id="searchText" placeholder="请输入你要搜索的书籍...">
+                  </div>
+                  <div class="col-sm-2" style="padding-left: 0;">
+                    <button type="button" id="sbtn" onclick="search()"></button>
+                  </div>
+                </form>
+            </div>
+      </div>
+      
+    
+
+      <!--书籍列表-->
+      <table class="table">
+          <thead>
+              <tr class="info">
+                  <th></th>
+                  <th>编号</th>
+                  <th>书名</th>
+                  <th>作者</th>
+                  <th>类别</th>
+                  <th>价格</th>
+                  <th>数目</th>
+                  <th>修改</th>
+                  <th>删除</th>
+              </tr>
+          </thead>
+          <tbody>
+            <!--booklist-->
+          </tbody>
+      </table>
+      <div id="count" class="text-center">
+          <!--pageNum-->
+      </div>
+      <!--页脚-->
+
+  <!--javascript-->
+  <script type="text/javascript" src="../../lib/js/jquery.js"></script>
+  <script type="text/javascript" src="../../lib/js/bootstrap.js"></script>
+  
+  <script type="text/javascript">
+  //1 根据要显示的页码和每页显示的数量请求首屏数据
+	//2 点击提交按钮，把表单中的数据插入数据库
+	//3 点击删除数据，删除当前数据行
+  //4 点击修改数据，修改当前数据行
+  //5 点击搜索按钮，搜索搜索栏内容
+
+	//1 根据要显示的页码和每页显示的数量请求首屏数据
+  var pageSize = 20;//记录每页显示多少条数据
+	var page = 1;//当前是第几页
+	//load函数用于从数据库查询数据，并渲染在表格中
+	function load(var1=""){
+    var stext = var1;//接受要查询的字段（如果有）
+		var xhr = new XMLHttpRequest;
+		//发送请求
+    var url=`/showlist?page=${page}&pageSize=${pageSize}&stext=${stext}`;
+		xhr.open('GET',url);
+		xhr.send();
+		xhr.onload = function(){
+			var data = JSON.parse(xhr.responseText);//获得数据
+			if(data.code==1){
+				var result = data.data;//要渲染在表格中的数据!!!!!
+				var total = data.total;//总数据条数
+
+        if(stext!=""){ 
+          pageSize=total;//搜索不换页
+        }
+        else
+          pageSize=20;
+
+				//根据total展示总页数
+				var totalPage =  Math.ceil(total/pageSize);
+				var string = `<nav aria-label="Page navigation">
+								  <ul class="pagination">
+    								<li>
+     									<a href="#" aria-label="Previous">
+       									 <span aria-hidden="true">&laquo;</span>
+      								</a>
+    								</li> `;
+				for(var j=0;j<Math.min(10,totalPage);j++){
+					//如果循环的页码和当前页面相同，则当前页码高亮
+					if(j==page-1){
+						string = string+`<li class="active"><a href="javascript:;" class="page">${j+1}</a></li>`;
+					}else{
+						string = string+`<li><a href="javascript:;" class="page">${j+1}</a></li>`;
+					}
+					
+				}
+				string=string+
+                ` <li>
+     							<a href="#" aria-label="Next">
+        							<span aria-hidden="true">&raquo;</span>
+      						</a>
+    							</li>
+  							</ul>
+				</nav>`
+				document.getElementById('count').innerHTML = string;
+
+				//分页
+				var pageArr = document.getElementsByClassName('page');
+				for(var i=0;i<pageArr.length;i++){
+					pageArr[i].onclick = function(){
+						//在事件函数中，this指的绑定事件的那个元素
+						page = this.innerHTML;
+						load()
+					}
+        }
+        
+				//根据result渲染表格数据
+				var str = "";
+				for(var i=0;i<result.length;i++){
+					str = str+`<tr>
+            <td></td><!--对齐-->
+						<td>${result[i].id}</td>
+						<td>${result[i].title}</td>
+            <td>${result[i].author}</td>
+            <td>${result[i].category}</td>
+						<td>${result[i].price}</td>
+            <td>${result[i].quantity}</td>
+						<td>
+                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" onclick="modEvent(${result[i].id})">修改</button>            							
+            </td>
+            <td>
+              <button class="del btn btn-info btn-xs" onclick="delEvent(${result[i].id})">删除此书</button>
+            </td>
+					</tr>`;
+				};
+				var tbody = document.getElementsByTagName('tbody')[0];
+				tbody.innerHTML = str;
+				//delEvent();
+
+      }
+      else if(data.code==2) 
+        alert("NULL DATA");//无弹窗说明xhr请求有问题
+		}
+	}
+	load()//打开网页时加载列表
+
+
+  function getCookie(cname)
+  {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) 
+      {
+          var c = ca[i].trim();
+          if (c.indexOf(name)==0) 
+            return c.substring(name.length,c.length);
+      }
+          return "";
+  }
+
+  //2 点击修改按钮，动态渲染模态框并显示
+  function modEvent(var1){
+    var id = var1;
+    var xhr = new XMLHttpRequest;
+    xhr.open('get',`/getonebook?id=${id}`);
+    xhr.send(null);
+    xhr.onload = function(){
+      var data = JSON.parse(xhr.responseText);//获得数据
+			if(data.code==1){
+        var result = data.data;//要渲染在modal中的数据!!!!!
+        var str="";
+        str +=`
+        <div class="modal-body">
+              <form id="modBookForm" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label class="col-sm-2">书名</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" name="title" placeholder="书名" 
+                    value=${result.title}>
+                  </div>  
+                  <label class="col-sm-2">作者</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" name="author" placeholder="作者名"
+                    value=${result.author}>
+                  </div>
+                </div><br><br>    
+                <div class="form-group">
+                  <label class="col-sm-2">类别</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" name="category" placeholder="类别" 
+                    value=${result.category}>
+                  </div>  
+                </div><br><br>             
+                <div class="form-group">
+                  <label class="col-sm-2">价格</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" name="price" placeholder="价格"
+                    value=${result.price}>
+                  </div>  
+                  <label class="col-sm-2">数目</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" name="quantity" placeholder="数目"
+                    value=${result.quantity}>
+                  </div>
+                </div><br><br>
+                <div class="form-group">
+                  <label class="col-sm-2">简介</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" style="height: 80px;" name="introduction" 
+                    placeholder="简介" value=${result.introduction}>
+                  </div>
+                </div><br><br><br><br>
+                <div class="form-group">
+                  <label class="col-sm-2">上传图片</label>
+                  <div class="col-sm-10">
+                    <input type="file" name="file" style="float:left;background-color: ivory;" 
+                    enctype="multipart/form-data" id="picture">                   
+                  </div>
+                </div><br>
+                <div class="modal-footer"> 
+                <p class="text-center">
+                  <button type="button" class="btn btn-primary" onclick="modBook(${id})">提交</button>
+                </p>          
+                </div>
+              </form>
+            </div>
+        `;
+        var mbody = document.getElementsByTagName('mbody')[0];
+        mbody.innerHTML = str;
+        $("#myModal").modal("show");
+      }
+      else alert("DATA NULL");
+      
+    }
+  }
+
+  //3 点击删除数据，删除当前数据行
+  function delEvent(var1){	
+    var id = var1;
+    var xhr = new XMLHttpRequest;
+    xhr.open('GET',`/delbook?id=${id}&tk=${getCookie('tk')}`);
+    xhr.send();
+    xhr.onload = function(){
+      var data = JSON.parse(xhr.responseText);
+      if(data==403){
+        alert('无权操作，请登录');
+        window.location.replace('adminlogin.html');
+      }
+      if(data.code==1){
+        load()
+      }
+      else alert('del error');
+      }	
+    }
+
+  //4 模态框内：点击修改数据，完成后隐藏模态框
+  function modBook(var1){
+    var id = var1;
+    var fm = document.getElementById('modBookForm');
+    var formdata= new FormData(fm);
+    formdata.append('id',id);
+    formdata.append('tk',getCookie('tk'));
+    //console.log(formdata.get('title'));
+
+    var xhr=new XMLHttpRequest();
+    //js中的url从localhost开始
+    xhr.open('POST',`/bookshop/adminSys/modifybook.php`);
+    xhr.send(formdata);
+    xhr.onload=function(){
+      var data = JSON.parse(xhr.responseText);
+      if(data==403){
+        alert('无权操作，请登录');
+        window.location.replace('adminlogin.html');
+      }
+      if(data.code==1){
+        alert('success');
+      }
+      else
+        alert(data.code);
+      }
+      $('#myModal').modal('hide');//隐藏模态框
+      
+      page = 1;
+      load();//更改后重新加载列表  
+  }
+  //5 点击搜索按钮，搜索搜索栏内容
+  function search(){
+      var stext = document.getElementById('searchText').value;
+      load(stext);
+  }
+  </script>
+</body>
+</html>

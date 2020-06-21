@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+
+        <imageYO>
+           
+        </imageYO>
+        <script type="text/javascript" src="../lib/js/jquery.js"></script>
+        <script type="text/javascript" src="../lib/js/bootstrap.js"></script>
+        <script>
+            test();
+            function test(){
+                var xhr = new XMLHttpRequest;
+                //发送请求
+                xhr.open('GET',`/bookshop/adminSys/test.php`);
+                xhr.send();
+                xhr.onload = function(){
+                    var data = JSON.parse(xhr.responseText);//获得数据
+                    if(data.code==1){
+                        var result = data.data;//图片路径的数组
+                    }
+                    //console.log(result);
+                    var str="";
+                    for(var i=0;i<result.length;++i){
+                        str += `<img id=${i} src="">`;
+                    }
+                    document.getElementsByTagName('imageYO')[0].innerHTML=str;
+                    for(i=0;i<result.length;++i)
+                    document.getElementById(`${i}`).src=result[i].filedir;
+                }
+            }    
+        </script>
+    </body>
+</html>
